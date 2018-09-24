@@ -1,0 +1,60 @@
+# docker-compose down -v
+
+version: '3.7'
+
+services:
+
+  api: # Flask and uWSGI
+    container_name: api 
+    restart: always
+    build: ./src
+    volumes:
+      - type: bind
+        source: ./src
+        target: /src
+    entrypoint: uwsgi
+    command: --ini ./uwsgi.ini
+    networks: 
+      - internal
+      - external
+    #    volume:
+    #      nocopy: true
+    # depends_on: 
+    #  - db
+
+  nginx:
+    container_name: nginx
+    image: nginx:latest
+    restart: always
+    volumes:
+      - ./services/nginx/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+    networks:
+      - external
+    depends_on:
+      - api
+    #build: ./nginx
+
+  # db:
+  #   image: postgres:latest
+  #   restart: always
+  #   volumes:
+  #    - "dbdata:/var/lib/postgresql/data"
+  #   networks:
+  #     - internal
+
+networks:
+  internal:
+    driver: bridge
+  external:
+    driver: bridge
+
+# volumes:
+#  appdata: 
+#  dbdata:
+
+# ${COMPOSE_PROJECT_NAME}
+
+
+      
