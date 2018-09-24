@@ -15,6 +15,7 @@ services:
   api: # Flask and uWSGI
     container_name: api 
     restart: always
+    env_file: ./.env
     build: ./services/api
     volumes:
       - type: bind
