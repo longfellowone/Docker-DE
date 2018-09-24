@@ -4,21 +4,27 @@ version: '3.7'
 
 services:
 
+  # db:
+  #   image: postgres:latest
+  #   restart: always
+  #   volumes:
+  #    - "dbdata:/var/lib/postgresql/data"
+  #   networks:
+  #     - internal
+
   api: # Flask and uWSGI
     container_name: api 
     restart: always
-    build: ./src
+    build: ./services/api
     volumes:
       - type: bind
         source: ./src
         target: /src
     entrypoint: uwsgi
-    command: --ini ./uwsgi.ini
+    command: --ini ./app.ini
     networks: 
       - internal
       - external
-    #    volume:
-    #      nocopy: true
     # depends_on: 
     #  - db
 
@@ -35,14 +41,6 @@ services:
     depends_on:
       - api
     #build: ./nginx
-
-  # db:
-  #   image: postgres:latest
-  #   restart: always
-  #   volumes:
-  #    - "dbdata:/var/lib/postgresql/data"
-  #   networks:
-  #     - internal
 
 networks:
   internal:
